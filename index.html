@@ -806,19 +806,19 @@ function galleryHtml() {
         <div class="mt-2 font-bold truncate">${i + 1}. ${esc(s.title)} <span class="font-normal" style="color:var(--mu)">${RATIO_LABEL[s.w + 'x' + s.h]} · ${s.w}×${s.h}</span></div>
         <div class="text-[11px] break-all mt-0.5" style="color:var(--mu)">출처: ${esc(provText(s.prov))}</div>
         <div class="flex gap-1.5 mt-2"><button class="soft flex-1 justify-center" data-a="galOpen" data-i="${i}">열기</button><a class="soft flex-1 justify-center" href="${s.objUrl || '#'}" download="gallery-${i + 1}.${s.saved ? 'jpg' : 'png'}">저장</a><button class="soft flex-1 justify-center" data-a="galSave" data-i="${i}">현재 작업 저장</button></div></div>`).join('')}</div>
-    <div class="sec-t">저장할 이미지의 출처 기록 <span class="${v.ok ? 'pill-pass' : 'pill-fail'}">${v.ok ? '기록됨' : '보완 필요'}</span></div>
+    <div class="sec-t">저장할 이미지의 출처 기록 <span id="prov-badge" class="${v.ok ? 'pill-pass' : 'pill-fail'}">${v.ok ? '기록됨' : '보완 필요'}</span></div>
     <select id="prov-type" class="fld w-full"><option value="own" ${PROV.type === 'own' ? 'selected' : ''}>본인 제작</option><option value="external" ${PROV.type === 'external' ? 'selected' : ''}>외부 이미지 사용</option></select>
     <div id="prov-ext" class="space-y-2 mt-2 ${PROV.type === 'own' ? 'hidden' : ''}">
         <input id="prov-url" class="fld w-full" placeholder="원본 출처 URL (https://…)" value="${esc(PROV.url)}">
         <select id="prov-basis" class="fld w-full">${['라이선스명', '이용약관', '수업 제공 표기'].map(b => `<option ${PROV.basis === b ? 'selected' : ''}>${b}</option>`).join('')}</select>
         <input id="prov-basis-text" class="fld w-full" placeholder="예: CC BY 4.0 / Unsplash License / 3주차 제공 자료" value="${esc(PROV.basisText)}"></div>
-    <p id="prov-msg" class="text-[11px] mt-1.5" style="color:var(--mu)">${v.ok ? '저장할 때 이 기록이 함께 저장됩니다. 사진을 썼다면 본인이 찍거나 만든 것인지 확인하세요.' : esc(v.msg)}</p>`;
+    <p id="prov-msg" class="text-[11px] mt-1.5" style="color:${v.ok ? 'var(--mu)' : '#b42343'}">${v.ok ? '저장할 때 이 기록이 함께 저장됩니다. 사진을 썼다면 본인이 찍거나 만든 것인지 확인하세요.' : esc(v.msg)}</p>`;
 }
 
 function bindPanelExtras() {
     for (const id of ['prov-type', 'prov-url', 'prov-basis', 'prov-basis-text']) { const el = $('#' + id); if (!el) continue; el.addEventListener('input', () => {
         PROV = { type: $('#prov-type').value, url: $('#prov-url').value.trim(), basis: $('#prov-basis').value, basisText: $('#prov-basis-text').value.trim() }; lsSet(LS.prov, PROV);
-        $('#prov-ext').classList.toggle('hidden', PROV.type === 'own'); const v = validateProv(PROV); $('#prov-msg').textContent = v.ok ? '저장할 때 이 기록이 함께 저장됩니다.' : v.msg; }); }
+        $('#prov-ext').classList.toggle('hidden', PROV.type === 'own'); const v = validateProv(PROV); $('#prov-msg').textContent = v.ok ? '저장할 때 이 기록이 함께 저장됩니다.' : v.msg; $('#prov-msg').style.color = v.ok ? 'var(--mu)' : '#b42343'; const b = $('#prov-badge'); b.className = v.ok ? 'pill-pass' : 'pill-fail'; b.textContent = v.ok ? '기록됨' : '보완 필요'; }); }
 }
 Object.assign(A, {
     galOpen: el => openGallery(+el.dataset.i),
